@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: org.grafandreas.opencv.eval
+Bundle-ManifestVersion: 2
+Bundle-Name: org.grafandreas.opencv.eval
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: org.grafandreas.opencv.eval; singleton:=true
+Bundle-ActivationPolicy: lazy
+Bundle-NativeCode: opencv_java410.dll; osname=win32; osname=win64; processor=x86; processor=x86_64
+Require-Bundle: org.eclipse.xtext,
+ org.eclipse.xtext.xbase,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.objectweb.asm;bundle-version="[7.1.0,7.2.0)";resolution:=optional,
+ org.eclipse.xtext.common.types,
+ org.eclipse.xtext.xbase.lib;bundle-version="2.14.0",
+ org.eclipse.xtext.util,
+ org.eclipse.emf.common,
+ org.eclipse.xtend.lib;bundle-version="2.14.0",
+ org.antlr.runtime;bundle-version="[3.2.0,3.2.1)",
+ org.grafandreas.opencv.bundle;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.grafandreas.opencv.eval,
+ org.grafandreas.opencv.eval.interpreter,
+ org.grafandreas.opencv.eval.jvmmodel,
+ org.grafandreas.opencv.eval.oCVEval,
+ org.grafandreas.opencv.eval.oCVEval.impl,
+ org.grafandreas.opencv.eval.oCVEval.util,
+ org.grafandreas.opencv.eval.parser.antlr,
+ org.grafandreas.opencv.eval.parser.antlr.internal,
+ org.grafandreas.opencv.eval.scoping,
+ org.grafandreas.opencv.eval.serializer,
+ org.grafandreas.opencv.eval.services,
+ org.grafandreas.opencv.eval.validation
+Import-Package: org.apache.log4j
+Bundle-ClassPath: lib/,
+ .

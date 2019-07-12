@@ -1,0 +1,20 @@
+grammar org.grafandreas.opencv.eval.OCVEval with   org.eclipse.xtext.xbase.Xbase
+
+
+generate oCVEval "http://www.grafandreas.org/opencv/eval/OCVEval"
+
+import "http://www.eclipse.org/xtext/xbase/Xbase" as xbase
+
+Model:
+	importSection=XImportSection?
+	methods += XMethodDeclaration*
+	body = XBlockExpressionWithoutBraces;
+
+XBlockExpressionWithoutBraces returns xbase::XBlockExpression: 
+	{xbase::XBlockExpression}
+		(expressions+=XExpressionOrVarDeclaration ';'?)*
+	;	
+
+XMethodDeclaration:
+	"def" ('<' typeParameters+=JvmTypeParameter (',' typeParameters+=JvmTypeParameter)* '>')? type=JvmTypeReference? name=ID "(" (parameters+=FullJvmFormalParameter ("," parameters+=FullJvmFormalParameter)* )? ")" body =XBlockExpression
+;	
