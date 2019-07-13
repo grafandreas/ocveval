@@ -1,0 +1,39 @@
+import org.opencv.core.Mat;
+import org.opencv.core.CvType;
+import org.opencv.imgcodecs.Imgcodecs
+import org.opencv.imgproc.Imgproc
+import java.util.List
+import java.util.ArrayList
+import org.opencv.core.Core
+import org.opencv.core.Rect
+
+val mat = Mat.eye(3, 3, 1) // CvType::CV_8UC1)
+
+
+val limg = Imgcodecs.imread("D:/udacity/CarND-Advanced-Lane-Lines/test_images/straight_lines1.jpg")
+
+
+val img = new Mat(limg, new Rect(0,(limg.height/2),limg.width,limg.height/2))
+
+val wide = new Mat
+Imgproc.Canny(img, wide, 50, 150, 3, false);
+val bgr = new ArrayList<Mat>
+Core.split(img,bgr)
+
+val hsv = new Mat
+ Imgproc.cvtColor(img, hsv, Imgproc.COLOR_BGR2HSV);
+val bgr2 =   new ArrayList<Mat>
+ Core.split(hsv,bgr2)
+ 
+ val hls = new Mat
+ Imgproc.cvtColor(img, hls, Imgproc.COLOR_BGR2HLS);
+ 
+ val hlsspl =   new ArrayList<Mat>
+ Core.split(hls,hlsspl)
+ 
+ val channel = hlsspl.get(2)
+ Core.normalize(channel, channel, 0.0, 255.0 / 2, Core.NORM_MINMAX);
+ val x = channel
+ 
+ val lines = new Mat
+  Imgproc.HoughLinesP(channel, lines, 5.0, 4.0, 7);
