@@ -7,7 +7,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.xtext.xbase.XExpression;
 
-public class XMap extends LinkedHashMap<XExpression, Object> implements Adapter {
+public class XMap extends LinkedHashMap<XExpression, TraceData> implements Adapter {
 
 		/**
 	 * 

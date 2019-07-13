@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -48,15 +49,18 @@ import org.eclipse.xtext.ui.util.JavaProjectFactory;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XMemberFeatureCall;
 import org.eclipse.xtext.xbase.interpreter.IEvaluationContext;
 import org.eclipse.xtext.xbase.interpreter.IEvaluationResult;
 import org.eclipse.xtext.xbase.interpreter.impl.DefaultEvaluationContext;
 import org.eclipse.xtext.xbase.interpreter.impl.XbaseInterpreter;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xtype.XImportDeclaration;
+import org.grafandreas.opencv.eval.interpreter.OpenCVInterpreter;
 import org.grafandreas.opencv.eval.oCVEval.Model;
 import org.grafandreas.opencv.eval.oCVEval.XMethodDeclaration;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -94,6 +98,15 @@ public class ModelQueryInterpreterHandler extends AbstractHandler implements IHa
 	
 	@Inject
 	IResourceSetProvider rsp;
+	
+	Cloner cloner = new Cloner();
+	
+	Map<String,Integer> callMap =  ImmutableMap.of( "org.opencv.imgproc.Imgproc.Canny" , 1,
+			"org.opencv.core.Core.split",1,
+			"org.opencv.imgproc.Imgproc.cvtColor",1,
+			"org.opencv.core.Core.normalize",1
+			
+			);
 
 	@Override
 	public Object execute(ExecutionEvent event) {
@@ -227,7 +240,7 @@ public class ModelQueryInterpreterHandler extends AbstractHandler implements IHa
 	
 	private String interpret(final IProject project, final Model m, final IProgressMonitor monitor) {
 		
-		
+		callMap.put("org.opencv.imgproc.Imgproc.HoughLinesP",1);
 		IEvaluationContext context = new DefaultEvaluationContext();
 		XbaseInterpreter configuredInterpreter = getConfiguredInterpreter((XtextResource)m.eResource());
 		
@@ -264,7 +277,19 @@ public class ModelQueryInterpreterHandler extends AbstractHandler implements IHa
 				result.getException().printStackTrace();
 				return IterableExtensions.join(data, "\n");
 			} else {
-				adapter.put(x,result.getResult());
+				
+				adapter.put(x, new TraceData(serializer.serialize(x).trim(), cloner.clone(result.getResult()), null));
+				if(x instanceof XMemberFeatureCall) {
+					if(callMap.containsKey(((XMemberFeatureCall) x).getFeature().getQualifiedName())) {
+						Integer idx = callMap.get(((XMemberFeatureCall) x).getFeature().getQualifiedName());
+						if(((XMemberFeatureCall) x).getFeature().getQualifiedName().equals("org.opencv.imgproc.Imgproc.HoughLinesP")) {
+							adapter.put(x, new TraceData(serializer.serialize(x).trim(),cloner.clone(((OpenCVInterpreter) configuredInterpreter).lastArgumentValues.get(idx)), DisplayConfig.MATRIX));
+						}
+						else
+							adapter.put(x, new TraceData(serializer.serialize(x).trim(),cloner.clone(((OpenCVInterpreter) configuredInterpreter).lastArgumentValues.get(idx)), null));
+					}
+				}
+				
 				if (result.getResult() == null) {
 					data.add("// null");
 				} else {

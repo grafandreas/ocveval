@@ -1,20 +1,20 @@
 package org.grafandreas.opencv.eval.interpreter
 
-import org.eclipse.xtext.xbase.interpreter.impl.XbaseInterpreter
-import org.opencv.core.Core
-import org.eclipse.xtext.common.types.JvmOperation
+import com.google.common.collect.Lists
+import com.google.inject.Inject
 import java.util.List
-import java.lang.reflect.Method
-import org.opencv.core.Mat
-import org.opencv.core.CvType
+import org.eclipse.xtext.common.types.JvmOperation
+import org.eclipse.xtext.common.types.JvmPrimitiveType
 import org.eclipse.xtext.naming.QualifiedName
+import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.xbase.XVariableDeclaration
 import org.eclipse.xtext.xbase.interpreter.IEvaluationContext
-import org.eclipse.xtext.common.types.JvmPrimitiveType
-import org.eclipse.xtext.util.CancelIndicator
-import org.eclipse.xtext.common.types.util.Primitives.Primitive
+import org.eclipse.xtext.xbase.interpreter.impl.XbaseInterpreter
 import org.eclipse.xtext.xbase.typesystem.util.CommonTypeComputationServices
-import com.google.inject.Inject
+import org.grafandreas.opencv.bundle.activator.Activator
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import java.util.ArrayList
 
 //import org.opencv.Activator
 
@@ -24,14 +24,16 @@ class OpenCVInterpreter extends XbaseInterpreter {
 		@Inject
 	private CommonTypeComputationServices services;
 	
+	public List<Object> lastArgumentValues
+	
 	new() {
 		super()
 		println("Constructor")
 		 System.loadLibrary("opencv_java410");
 //		val mat = Mat.eye(3, 3, CvType::CV_8UC1)		
 
-		org.grafandreas.opencv.bundle.activator.Activator.ll()
-		org.grafandreas.opencv.bundle.activator.Activator.t()
+		Activator.ll()
+		Activator.t()
 		
 		val mat = Mat.eye(3, 3, CvType::CV_8UC1)
 		println(mat)
@@ -51,6 +53,7 @@ class OpenCVInterpreter extends XbaseInterpreter {
 //			println(sys.class.classLoader)
 //			val m = sys.getMethod("loadLibrary",String)
 //			m.invoke(null, "opencv_java410")
+		this.lastArgumentValues = Lists.newArrayList(argumentValues)
 		return super.invokeOperation(operation,receiver,argumentValues)
 	}
 	
@@ -90,5 +93,7 @@ class OpenCVInterpreter extends XbaseInterpreter {
 		context.newValue(QualifiedName.create(variableDecl.getName()), initialValue);
 		return initialValue;
 	}
+	
+	
 	 
 }

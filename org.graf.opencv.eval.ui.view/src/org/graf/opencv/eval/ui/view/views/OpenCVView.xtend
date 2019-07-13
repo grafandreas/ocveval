@@ -31,6 +31,7 @@ import org.eclipse.xtext.ui.editor.model.XtextDocument
 import org.eclipse.xtext.util.concurrent.IUnitOfWork
 import org.eclipse.xtext.xbase.XExpression
 import org.grafandreas.opencv.eval.ui.handler.XMap
+import org.grafandreas.opencv.eval.ui.handler.TraceData
 
 /** 
  * This sample class demonstrates how to plug-in a new
@@ -182,12 +183,12 @@ class OpenCVView extends ViewPart {
 					var XtextDocument doc = (editor.getDocument() as XtextDocument)
 					var String result = doc.readOnly(([ XtextResource r |
 						val conv = new HTMLConverter
-						val adapter = adapt(r) as LinkedHashMap<XExpression,Object>
+						val adapter = adapt(r) as LinkedHashMap<XExpression,TraceData>
 						return '''
 						
 						<table border="1">
 						«FOR e : adapter.entrySet()»
-							<tr><td>«IF e.value !== null»«conv.conv(e.value)»«ELSE»«ENDIF»</td><td></td></tr>
+							<tr><td>«IF e.value.value !== null»«conv.conv(e.value.value, e.value.dispConfig)»«ELSE»«ENDIF»</td><td>«e.value.expString»</td></tr>
 						«ENDFOR»
 						</table>
 						'''
