@@ -34,6 +34,12 @@ val bgr2 =   new ArrayList<Mat>
  val channel = hlsspl.get(2)
  Core.normalize(channel, channel, 0.0, 255.0 / 2, Core.NORM_MINMAX);
 
- 
+ val wide2 = new Mat
+Imgproc.Canny(channel, wide2, 50, 150, 3, false);
+
  val lines = new Mat
-  Imgproc.HoughLinesP(channel, lines, 5.0, 4.0, 7);
+  Imgproc.HoughLinesP(wide2, lines, 5.0, 4.0, 7, 10, 5);
+ val linesMat = new Mat(channel.size, CvType.CV_8U)
+ val o = org.grafandreas.opencv.eval.example.LineDrawer.render(linesMat, lines)
+ 
+ 
